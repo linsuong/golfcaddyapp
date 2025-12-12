@@ -17,7 +17,7 @@ def course_healthcheck():
     url = f"{course_url}/v1/healthcheck"
     
     try:
-        response = requests.get(course_url)
+        response = requests.get(url)
         print(f"healthcheck: {response.status_code}")
         print(response.text)
         
@@ -37,7 +37,7 @@ def search_course(search_term):
     url = f"{course_url}/v1/search"
     
     headers = {
-        "auth": course_key
+        "Authorization": f"Key {course_key}"
     }
     
     params = {
@@ -47,33 +47,82 @@ def search_course(search_term):
     print(f"searching for closest match to: {search_term}")
     
     try:
-        response = requests.get(course_url)
-        print(f"healthcheck: {response.status_code}")
+        response = requests.get(url, headers=headers, params=params)
+        # print(f"search response: {response.status_code}")
         
+        if response.status_code == 401:
+            print("error: UnauthorizedError")
+            
         if response.status_code == 200:
             data = response.json()
             print(f"found {len(data.get('courses', []))} courses")
+
+            with open('data/search_results.json', 'w') as f:
+                json.dump(data, f, indent = 2)
+                
+            print("saved to: data/search_results.json")
             
+            return data
+        
+        else: 
+            print(f'error, {response.status_code}, {response.text}')
+            
+    except Exception as e:
+        print(f"Search failed: {e}")
+        return None
+
+
+def wind_forecast(lat, lon):
+    url = 'https://api.windy.com/api/point-forecast/v2'
+    
+    params = {
+        "lat": lat,
+        "lon": lon,
+        "model": 'gfs',
+        "parameters": ["temp", "dewpoint", "precip", "wind"],
+        "levels": ['surface'],
+        "key": wind_key
+        }   
+    
+    headers = {
+        "Content-Type": "application/json"
+            }
+      
+    try:
+        response = requests.post(url, json=params, headers=headers, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            print("wind data obtained for course")
+            
+            with open('data/wind_data.json', 'w') as f:
+                json.dump(data, f, indent = 2)
+                
+            print("saved to: data/wind_data.json")
+            
+            return data
+        
+        else: 
+            print(f'error, {response.status_code}, {response.text}')
             
     except Exception as e:
         print(f"Search failed: {e}")
         return None
     
 def main():
-    print("=== Testing Golf Course API ===\n")
+    print("Golf Course API test")
 
     # Step 1: Test healthcheck
-    print("1. Testing API healthcheck...")
+    print("API healthcheck")
     if not course_healthcheck():
         return
 
-    # Step 2: Search for a course
-    print("\n2. Searching for a course...")
-    search_term = input("enter course name (default = pinehurst)").strip()
-    if not search_term:
-        search_term = "pinehurst"
+    search_course('pinehurst')
 
-    search_result = search_course(search_term)
-        
+    print("windy API test")
+
+    wind_forecast(50, 50)
+
+    
 if __name__ == "__main__":
     main()
