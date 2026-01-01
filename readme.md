@@ -1,6 +1,6 @@
 ## golf caddy app
 # idea:
-- obtains golf course, wind, weather, information, and acts like a caddy, with personalised club yardages, tells you what to hit off which holes.
+- obtains golf course, wind, weather, information, and acts like a caddy, with personalised club yardages, tells you what to hit off which holes, prediction of shot trajectory.
 
 - with wind knowledge, can calculate how the shot will be changed with the wind based off standard ball strike numbers (spin, ball speed), based off one's club head speed, provided you have the standard lofts for your clubs
 
@@ -17,3 +17,6 @@
 - gps integration, know how far you hit the shot
 - smart tracking system sets goals for scores to obtain
 - support for adding your own golf clubs - different values of spin based off club model (customisation features maybe)
+
+# Sources:
+- *Golf and Wind: The Physics of Playing Golf in Wind* - Shantanu Malik, Sandeep Saha, Springer, 2021.

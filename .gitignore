@@ -1,3 +1,9 @@
 .env
-
+data/*.json
+data/__pycache__
+api/__pycache__
 openapi.yml
+data/search_results.json
+data/wind_data.json
+/test_code_database
+framework.txt
